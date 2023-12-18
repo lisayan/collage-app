@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drag and Drop Image Upload</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var dropArea = document.getElementById('drop-area');
+
+            dropArea.addEventListener('dragenter', handleDragEnter, false);
+            dropArea.addEventListener('dragover', handleDragOver, false);
+            dropArea.addEventListener('dragleave', handleDragLeave, false);
+            dropArea.addEventListener('drop', handleDrop, false);
+
+            function handleDragEnter(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                dropArea.classList.add('dragging');
+            }
+
+            function handleDragOver(e) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+
+            function handleDragLeave(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                dropArea.classList.remove('dragging');
+            }
+
+            function handleDrop(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                dropArea.classList.remove('dragging');
+
+                var file = e.dataTransfer.files[0];
+                var formData = new FormData();
+                formData.append('file', file);
+
+                $.ajax({
+                    url: '/upload',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log(response);
+                    }
+                });
+            }
+        });
+    </script>
+    <style>
+        #drop-area {
+            width: 300px;
+            height: 200px;
+            border: 2px dashed #ccc;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0 auto;
+            padding-top: 80px;
+        }
+
+        #drop-area.dragging {
+            border-color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="drop-area">
+        <p>Drag and drop an image file here</p>
+    </div>
+</body>
+</html>
