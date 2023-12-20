@@ -26,6 +26,11 @@
         #collage {
             margin-top: 20px;
         }
+
+        #collage img {
+            max-width: 100%;
+            height: auto;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
@@ -107,7 +112,7 @@
                 success: function(response) {
                     if (response.status === 'success') {
                         var collageDiv = document.getElementById('collage');
-                        collageDiv.innerHTML = '<h2>Generated Collage</h2><img src="/static/collages/' + response.collage_filename + '" alt="Generated Collage">';
+                        collageDiv.innerHTML = '<img src="' + generateCollageURL('collage.jpg') + '" alt="Generated Collage">';
                     } else {
                         alert(response.message);
                     }
@@ -117,6 +122,10 @@
                     console.log(error);
                 }
             });
+        }
+
+        function generateCollageURL(filename) {
+            return '/collages/' + filename;
         }
     </script>
 </body>

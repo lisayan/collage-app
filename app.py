@@ -6,8 +6,8 @@ app = Flask(__name__,
             template_folder='/Users/lisayan/Documents/collage_app/')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-UPLOAD_FOLDER = 'uploads'
-COLLAGE_FOLDER = 'collages'
+UPLOAD_FOLDER = '/Users/lisayan/Documents/collage_app/uploads'
+COLLAGE_FOLDER = '/Users/lisayan/Documents/collage_app/collages'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -56,6 +56,10 @@ def upload():
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/collages/<filename>')
+def generated_collage(filename):
+    return send_from_directory('/Users/lisayan/Documents/collage_app/collages', 'collage.jpg')
 
 @app.route('/collage')
 def generate_collage():
