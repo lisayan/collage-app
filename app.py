@@ -24,7 +24,7 @@ def create_collage(image_paths, collage_path):
 
     # Assuming all images have the same size, you may need to resize them if needed
     width, height = images[0].size
-    collage = Image.new('RGB', (width * len(images), height))
+    collage = Image.new('RGB', (width * len(images), height), 'white')
 
     for i, img in enumerate(images):
         collage.paste(img, (i * width, 0))
@@ -33,11 +33,11 @@ def create_collage(image_paths, collage_path):
 
 @app.route('/')
 def home():
-    print('hi lisa')
     return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload():
+    print('uploading')
     if 'file' not in request.files:
         return 'No file part'
 

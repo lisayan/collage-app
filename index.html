@@ -67,10 +67,38 @@
 
             if (files.length > 0) {
                 dropZone.innerHTML = '<p>Uploaded: ' + files[0].name + '</p>';
+
+                // AJAX call to upload the file
+                uploadFile(files[0]);
             } else {
                 dropZone.innerHTML = '<p>Upload image here</p>';
             }
         }
+
+        function uploadFile(file) {
+            var formData = new FormData();
+            formData.append('file', file);
+
+            $.ajax({
+                type: 'POST',
+                url: '/upload',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Handle success if needed
+                    } else {
+                        alert('Error uploading file: ' + response.message);
+                    }
+                },
+                error: function(error) {
+                    alert('Error uploading file.');
+                    console.log(error);
+                }
+            });
+        }
+
 
         function generateCollage() {
             $.ajax({
