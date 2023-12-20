@@ -1,75 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drag and Drop Image Upload</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            var dropArea = document.getElementById('drop-area');
-
-            dropArea.addEventListener('dragenter', handleDragEnter, false);
-            dropArea.addEventListener('dragover', handleDragOver, false);
-            dropArea.addEventListener('dragleave', handleDragLeave, false);
-            dropArea.addEventListener('drop', handleDrop, false);
-
-            function handleDragEnter(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                dropArea.classList.add('dragging');
-            }
-
-            function handleDragOver(e) {
-                e.stopPropagation();
-                e.preventDefault();
-            }
-
-            function handleDragLeave(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                dropArea.classList.remove('dragging');
-            }
-
-            function handleDrop(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                dropArea.classList.remove('dragging');
-
-                var file = e.dataTransfer.files[0];
-                var formData = new FormData();
-                formData.append('file', file);
-
-                $.ajax({
-                    url: '/upload',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log(response);
-                    }
-                });
-            }
-        });
-    </script>
     <style>
-        #drop-area {
-            width: 300px;
-            height: 200px;
-            border: 2px dashed #ccc;
+        body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin: 0 auto;
-            padding-top: 80px;
+            margin: 50px;
         }
 
-        #drop-area.dragging {
-            border-color: #000;
+        #drop_zone {
+            border: 2px dashed #ccc;
+            width: 300px;
+            height: 200px;
+            padding: 20px;
+            margin: auto;
+        }
+
+        #file_input {
+            display: none;
+        }
+
+        #collage {
+            margin-top: 20px;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <body>
-    <div id="drop-area">
-        <p>Drag and drop an image file here</p>
+    <h1>Drag and Drop Image Upload</h1>
+
+    <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <p>Drag &amp; drop an image file here or click to select one.</p>
+        <input type="file" id="file_input" onchange="handleFileSelect(event);">
     </div>
+
+    <button onclick="generateCollage()">Generate Collage</button>
+
+    <div id="collage">
+        <!-- Collage will be dynamically loaded here -->
+    </div>
+
+    <script>
+        function dragOverHandler(event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'copy';
+        }
+
+        function dropHandler(event) {
+            event.preventDefault();
+
+            var files = event.dataTransfer.files;
+            handleFiles(files);
+        }
+
+        function handleFileSelect(event) {
+            var files = event.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            var dropZone = document.getElementById('drop_zone');
+            var fileInput = document.getElementById('file_input');
+
+            if (files.length > 0) {
+                dropZone.innerHTML = '<p>Uploaded: ' + files[0].name + '</p>';
+            } else {
+                dropZone.innerHTML = '<p>Upload image here</p>';
+            }
+        }
+
+        function generateCollage() {
+            $.ajax({
+                type: 'GET',
+                url: '/collage',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        var collageDiv = document.getElementById('collage');
+                        collageDiv.innerHTML = '<h2>Generated Collage</h2><img src="/static/collages/' + response.collage_filename + '" alt="Generated Collage">';
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(error) {
+                    alert('Error generating collage.');
+                    console.log(error);
+                }
+            });
+        }
+    </script>
 </body>
 </html>
